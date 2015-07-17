@@ -1,0 +1,31 @@
+{
+  "name": "Tree.js",
+  "version": "1.0",
+  "authors": [
+    "Shreyansh Pandey <334@doonschool.com>"
+  ],
+  "description": "A simple library for adding auto-refresh to web-design projects.",
+  "keywords": [
+    "simple",
+    "javascript",
+    "reload",
+    "livejs",
+    "live",
+    "js",
+    "auto",
+    "refresh",
+    "autorefresh",
+    "html",
+    "HEAD",
+    "ajax",
+    "XML"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
