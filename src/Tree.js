@@ -55,7 +55,7 @@
         return;
       }
 
-      setInterval(Tree.checkForChanges, Tree.interval);
+      setInterval(Tree.checkForChanges, interval);
 
     },
 
@@ -79,14 +79,14 @@
         if ( currentScriptTag.src.indexOf( "Tree.js" ) > -1 ||
              currentScriptTag.src.indexOf( "Tree.min.js" ) > -1 ) {
 
-          //processedFileCounter++;
           continue;
 
         }
 
         if ( Tree.doesFileExist( currentScriptTagSrc ) ) {
-          resourcesToTrack.push( currentScriptTagSrc );
-          //processedFileCounter++;
+
+          resourcesToTrack.push( cu
+            
         }
 
       }
@@ -103,14 +103,13 @@
           if ( !currentLinkTag.rel === "stylesheet" ||
                 currentLinkTagSrc.indexOf("blob") > -1 ) {
 
-            //processedFileCounter++;
             continue;
           }
 
           if ( Tree.doesFileExist( currentLinkTagSrc ) ) {
+
             resourcesToTrack.push( currentLinkTagSrc );
-            //processedFileCounter++;
-            console.log("The count is " + resourcesToTrack.length);
+
           }
 
         }
@@ -139,20 +138,12 @@
 
     checkForChanges: function() {
 
-      //console.log(resourcesToTrack.length);
-
       for ( var i = 0; i < resourcesToTrack.length; i++ ) {
 
         var currentResource      = resourcesToTrack[i],
             currentResourceCache = resourcesCache[currentResource];
 
         Tree.getHeadOfFile( currentResource, function( info ) {
-          //console.clear();
-          /*console.log(//"For file " + currentResource + "\n" +
-                       //"Old ETag " + currentResourceCache.etag +
-                       "\nFileName: " + currentResource +
-                       "\nNew Etag " + info.etag +
-                       "\nisDifferent: " + (!currentResourceCache.etag === info.etag));*/
 
           if (currentResourceCache.etag != info.etag) {
 
