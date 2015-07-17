@@ -5,45 +5,98 @@
 
   Beta Version - 1.0b
 
-  http://isomr.co/live
+  http://isomr.co/tree
 
   Using Tree.js is pretty simple. Just drop-in this file as a script tag in your
   project, and off you go.
 
   In case you want a better live-refresh, try using the Tree-Roots server, and
   setting then using Tree.js like this:
-    <script src="/path/to/tree.js"></script>
-    <script>
-      var treeConf = {
-        isTreeRoots: true,
-        "treeRoots": "localhost:port"
-      };
-    </script>
+    <script src="/path/to/tree.server.js?host=0.0.0.0&post=1000"></script>
 
   The code for Tree.js is similar to that of Live.js, but has been made much
   simpler.
+
+  NOTE: Tree.js SHOULD and HAS TO BE included last, i.e. after you have
+        linked all of your files. For best results, link it last in the <body>.
 
 */
 
 (function() {
 
-  var headerToTrack       = { "Etag": null, "Last-Modified": null },
-      resourcesCache      = {},
+  /* ------- VARIABLE DESCRIPTION ---------
+
+  resourcesCache : Object         => Stores the header information about each of the
+                                     tracked resources.
+
+  resourcesToTrack : Array        => Stores the list of files to be tracked for the
+                                     current URL.
+
+  interval : Number               => The number of milliseconds after which Tree.js
+                                     should check for any changes.
+                                     NOTE: If you have a cache-enabled server, set this
+                                     to a (little) higher value.
+
+ isDebug : Boolean                => If set to true, prints all the header information
+                                     regarding the changed file.
+
+ areResourcesMapped : Boolean     => The internal processing, sets this to true once all
+                                     of the resources have been mapped.
+
+
+  =========================================== */
+
+  var resourcesCache      = {},
       resourcesToTrack    = [],
-      requestsStack       = {},
       interval            = 5000,
-      isDevelopment       = true,
-      isInitialized       = false,
+      isDebug             = true,
       areResourcesMapped  = false;
+
+  /* - - - - - - - - - - - - - - - - - - - - -
+     ----------------------------------------- */
+
+  /* -------------- TREE OBJECT ----------------
+
+  The Tree object houses all of the functions and logic to refresh, list, check
+  the DOM and the webpage.
+
+  Function Descriptions:
+
+    init()                            :=> Initializes the library by mapping the resources.
+
+    heartbeat()                       :=> This function is executed once every the set interval.
+
+    mapResources()                    :=> Populates the header cache and the resources list.
+
+    checkForChanges()                 :=> Checks for any changes in any of the files present in
+                                          resources list.
+
+    doesFileExist( uri )              :=> Uses a HTTP/1.0 HEAD request to check if a file ( "uri" parameter) exists.
+
+    getHttpObject()                   :=> For max. compatibility, returns either an ActiveX Object
+                                          or a standard XMLHttpRequest object, depending what is
+                                          available.
+
+    getHeadOfFile( uri, passback )   :=> Gets the HTTP/1.0 HEAD for any file provided and calls the
+                                         callback.
+
+
+  ============================================== */
 
   var Tree = {
 
     init: function() {
 
       if (!Tree.areResourcesMapped) {
+
+        console.log("Tree.js: Mapping resources.");
+
         Tree.mapResources();
-        console.log("INITIALIZE....");
+
+        console.log("Tree.js: Resources mapped. Initialized.");
+
         return;
+
       }
 
     },
@@ -51,7 +104,7 @@
     heartbeat: function() {
 
       if (!Tree.areResourcesMapped) {
-        console.log("Oops! You need to initialize first.");
+        console.log("Tree.js: Oops! You need to initialize first.");
         return;
       }
 
@@ -69,8 +122,6 @@
           rawFileCounter       = (scriptTags.length + linkTags.length),
           processedFileCounter = 0;
 
-      console.log(scriptTags.length);
-
       for ( var i = 0; i < scriptTags.length; i++ ) {
 
         var currentScriptTag    = scriptTags[i],
@@ -84,14 +135,10 @@
         }
 
         if ( Tree.doesFileExist( currentScriptTagSrc ) ) {
-
-          resourcesToTrack.push( cu
-            
+          resourcesToTrack.push( currentScriptTagSrc );
         }
 
       }
-
-      console.log("After indexing all JavaScript files, the count is " + resourcesToTrack.length);
 
       if ( linkTags != null || linkTags != undefined || ( linkTags.length > 0 ) ) {
 
@@ -128,10 +175,6 @@
 
       }
 
-      /*Tree.areResourcesMapped = (rawFileCounter === processedFileCounter);
-      if (Tree.areResourcesMapped)
-        console.log("Yo");*/
-
       Tree.areResourcesMapped = true;
 
     },
@@ -145,16 +188,34 @@
 
         Tree.getHeadOfFile( currentResource, function( info ) {
 
-          if (currentResourceCache.etag != info.etag) {
+          var oldEtag = currentResourceCache.etag,
+              newEtag = info.etag;
 
-            console.log(currentResource + " was modified.");
+          var oldModified = currentResourceCache['last-modified'],
+              newModified = info['last-modified'];
+
+          if ( oldEtag != newEtag ||
+               oldModified != newModified ) {
+
+            console.log("Tree.js: Modified file detected " + currentResource +
+                        " of type " + currentResourceCache['content-type'] );
+            if (isDebug) {
+
+              console.log("Tree.js: \n\t" +
+                              "Old e-tag: " + oldEtag +
+                              "\n\tNew e-tag: " + newEtag +
+                              "\n\tOld Modification Timestamp: " + oldModified +
+                              "\n\tNew Modification Timestamp: " + newModified);
+
+            }
+
+            document.location.reload();
 
           }
 
         });
 
       }
-
 
     },
 
@@ -195,11 +256,23 @@
         var currentHeader = headers[i];
         if ( currentHeader.toLowerCase().indexOf("etag") > -1 ) {
 
-          info['etag'] = currentHeader.toLowerCase().split(":")[1].trim();
+          info['etag'] = currentHeader.toLowerCase()
+                                      .split(":")[1]
+                                      .trim();
 
         } else if ( currentHeader.toLowerCase().indexOf("last-modified") > -1 ) {
 
-          info['last-modified'] = currentHeader.toLowerCase().split(":")[1].trim();
+          info['last-modified'] = currentHeader.toLowerCase()
+                                               .split(":")[1]
+                                               .trim();
+
+        } else if ( currentHeader.toLowerCase().indexOf("content-type") > -1 ) {
+
+          info['content-type'] = currentHeader.toLowerCase()
+                                              .split(":")[1]
+                                              .trim()
+                                              .split(";")[0]
+                                              .trim();
 
         } else { continue; }
 
