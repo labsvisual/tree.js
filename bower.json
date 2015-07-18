@@ -1,5 +1,6 @@
 {
   "name": "Tree.js",
+  "main": "dist/tree.min.js",
   "version": "1.0",
   "authors": [
     "Shreyansh Pandey <334@doonschool.com>"
@@ -26,6 +27,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "nodejs-server"
   ]
 }
