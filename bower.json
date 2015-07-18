@@ -1,7 +1,7 @@
 {
   "name": "Tree.js",
   "main": "dist/tree.min.js",
-  "version": "1.0",
+  "version": "1.0.1",
   "authors": [
     "Shreyansh Pandey <334@doonschool.com>"
   ],
