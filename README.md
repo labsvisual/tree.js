@@ -36,6 +36,12 @@ Incase you're wondering why so, it's because, the moment your browser fetches Tr
 
 Another problem you can run into is that Tree.js is not working. Now, this can be caused if you have a cache control in the server and the timings are cancelling each other out. For example, NodeJS' `http-server` has the default cache timing of **320 seconds** and I ran into a couple of problems while working with it; the fix was pretty simple, add the `-c-1` flag. So, to start the server and use it with Tree.js, start it like this: `http-server -c-1` and you're ready. :)
 
+## Road Map
+Now, that I have released the initial version of this library, I am working on the following features:
+
+- Choosing what all to monitor. (JS/HTML/CSS)
+- A NodeJS server to automatically re-render the DOM and the affected CSS. 
+
 ## Problems
 If you think that you have the courage to download the repository, fix the code and then push it back again, feel free. :)
 
