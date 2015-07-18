@@ -27,7 +27,7 @@ Done! No kidding, you're done. Now go and make some changes to your files and se
 ## Using a CDN
 The folks over at [maxcdn](http://maxcdn.com) have been rather generous and have provided this project with its own CDN URL. You can use that one for fater loading times from their **global** content-distribution network.
 
-To leverage it, change the `src` attribute of the `script` tag to point to `//fill-in-the-url` and off you go.
+**This document will be updated once maxcdn authorizes the project.**
 
 ## Quirks
 Now, since Tree.js works by getting in all of the `link` and `script` tags of the page **before** it, you **will** have to include it last; make sure that this file is the last one to be included.
@@ -40,7 +40,7 @@ Another problem you can run into is that Tree.js is not working. Now, this can b
 Now, that I have released the initial version of this library, I am working on the following features:
 
 - Choosing what all to monitor. (JS/HTML/CSS)
-- A NodeJS server to automatically re-render the DOM and the affected CSS. 
+- A NodeJS server to automatically re-render the DOM and the affected CSS.
 
 ## Problems
 If you think that you have the courage to download the repository, fix the code and then push it back again, feel free. :)
