@@ -43,6 +43,7 @@
  areResourcesMapped : Boolean     => The internal processing, sets this to true once all
                                      of the resources have been mapped.
 
+ isEnabled : Boolean              => If set to true, Tree.js is enabled; disabled otherwise.
 
   =========================================== */
 
@@ -50,7 +51,8 @@
       resourcesToTrack    = [],
       interval            = 5000,
       isDebug             = true,
-      areResourcesMapped  = false;
+      areResourcesMapped  = false,
+      isEnabled           = true;
 
   /* - - - - - - - - - - - - - - - - - - - - -
      ----------------------------------------- */
@@ -61,6 +63,8 @@
   the DOM and the webpage.
 
   Function Descriptions:
+
+    checkForTags()                    :=> Checks if there are any tags to modify Tree's configuration.
 
     init()                            :=> Initializes the library by mapping the resources.
 
@@ -84,6 +88,29 @@
   ============================================== */
 
   var Tree = {
+
+    checkForTags: function() {
+
+      var scriptTags = document.getElementsByTagName('script');
+      for ( var i = 0; i < scriptTags.length; i++ ) {
+
+        var currentTag = scriptTags[i];
+        if ( (currentTag.getAttribute( 'src' )
+                        .toLowerCase()
+                        .indexOf('tree') > -1)
+                         &&
+
+             ( currentTag.getAttribute( 'src' )
+                         .toLowerCase()
+                         .indexOf( '#disabled' ) > -1 ) ){
+
+          isEnabled = false;
+
+        }
+
+      }
+
+    },
 
     init: function() {
 
@@ -286,8 +313,14 @@
 
   if ( document.location.protocol !== "file:" ) {
 
-    Tree.init();
-    Tree.heartbeat();
+    Tree.checkForTags();
+
+    if (isEnabled) {
+
+      Tree.init();
+      Tree.heartbeat();
+      
+    } else { console.log("Tree.js loaded successfully but is disabled."); }
 
   } else console.log("Tree.js does not play nicely with the file:/// protocol. Try HTTP (or a cookie).");
 
