@@ -36,6 +36,20 @@ Incase you're wondering why so, it's because, the moment your browser fetches Tr
 
 Another problem you can run into is that Tree.js is not working. Now, this can be caused if you have a cache control in the server and the timings are cancelling each other out. For example, NodeJS' `http-server` has the default cache timing of **320 seconds** and I ran into a couple of problems while working with it; the fix was pretty simple, add the `-c-1` flag. So, to start the server and use it with Tree.js, start it like this: `http-server -c-1` and you're ready. :)
 
+## Disable Tree.js
+If you want to disable Tree.js, you have to add the `#disabled` modifier in the inclusion index like so:
+```html
+<body>
+
+  ...
+  ...
+  ...
+
+  <script src="path/to/tree.min.js#disabled"></script>
+
+</body>
+```
+
 ## Road Map
 Now, that I have released the initial version of this library, I am working on the following features:
 
